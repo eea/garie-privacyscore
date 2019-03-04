@@ -91,6 +91,24 @@ const getData = async (item) => {
               console.log(err)
             })
 
+            const json_uri = results_uri + "/json/";
+            json_response = await request({
+                method: 'GET',
+                uri: json_uri,
+                resolveWithFullResponse: true
+            });
+            const json_dom = new JSDOM(json_response.body);
+            const json_val = json_dom.window.document.querySelector(".highlight").textContent;
+            const json_data = JSON.parse(json_val);
+
+            var json_file = path.join(reportFolder, 'privacyscore.json');
+
+            fs.outputJson(json_file, json_data, {spaces: 2})
+            .then(() => console.log(`Saved privacyscore json file for ${url}`))
+            .catch(err => {
+              console.log(err)
+            })
+
             const data = {};
             resolve(data);
         } catch (err) {
