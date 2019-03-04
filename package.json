@@ -12,7 +12,9 @@
     },
     "dependencies": {
         "garie-plugin": "https://github.com/eea/garie-plugin#0.0.6",
-        "request-promise": "^4.2.2"
+        "request-promise": "^4.2.2",
+        "sleep-promise": "8.0.1",
+        "website-scraper": "4.0.0"
     },
     "devDependencies": {
         "codecov": "^3.0.0",
