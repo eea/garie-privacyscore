@@ -1,0 +1,23 @@
+{
+    "name": "garie-privacyscore",
+    "version": "0.0.1",
+    "description": "PrivacyScore garie plugin",
+    "engines": {
+        "node": ">=6"
+    },
+    "scripts": {
+        "test": "ENV=test jest --coverage --config jest.config.json",
+        "test:watch": "ENV=test jest --watch --notify --notifyMode=change --coverage --config jest.config.json",
+        "start": "node ./src/index.js"
+    },
+    "dependencies": {
+        "garie-plugin": "https://github.com/eea/garie-plugin#0.0.6",
+        "request-promise": "^4.2.2"
+    },
+    "devDependencies": {
+        "codecov": "^3.0.0",
+        "jest": "^23.5.0",
+        "prettier": "1.13.7",
+        "supertest": "^3.3.0"
+    }
+}
