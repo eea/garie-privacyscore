@@ -13,6 +13,7 @@ const jsdom = require("jsdom");
 const { JSDOM } = jsdom;
 
 const privacyscore_base = 'https://privacyscore.org/'
+
 const getData = async (item) => {
     const { url } = item.url_settings;
     return new Promise(async (resolve, reject) => {
@@ -83,6 +84,20 @@ const getData = async (item) => {
 
             html_data = html_data.replace("</html>","<style type='text/css'>.navbar,.col-sm-4,.footer{display:none !important;} .col-md-4{display:block !important;}</style></html>");
 
+            const result_dom = new JSDOM(html_data);
+
+            const critical = result_dom.window.document.querySelectorAll(".col>.color-critical").length;
+            const bad = result_dom.window.document.querySelectorAll(".col>.color-bad").length;
+            const neutral = result_dom.window.document.querySelectorAll(".col>.color-neutral").length;
+            const good = result_dom.window.document.querySelectorAll(".col>.color-good").length;
+
+
+            var score = 0;
+            if (critical === 0){
+                const total = critical + bad + neutral + good;
+                score = good / total * 100;
+            }
+
             var html_file = path.join(reportFolder, 'privacyscore.html');
 
             fs.outputFile(html_file, html_data)
@@ -109,8 +124,10 @@ const getData = async (item) => {
               console.log(err)
             })
 
-            const data = {};
-            resolve(data);
+            var result = {}
+            result['privacyscore'] = score;
+
+            resolve(result);
         } catch (err) {
             console.log(`Failed to get data for ${url}`, err);
             reject(`Failed to get data for ${url}`);
