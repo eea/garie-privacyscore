@@ -24,7 +24,7 @@ function getResults(file) {
 
     var score = 0;
     if (critical === 0){
-        const total = critical + bad + neutral + good;
+        const total = critical + bad + good;
         score = good / total * 100;
     }
 
