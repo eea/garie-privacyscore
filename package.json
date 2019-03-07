@@ -11,7 +11,7 @@
         "start": "node ./src/index.js"
     },
     "dependencies": {
-        "garie-plugin": "https://github.com/eea/garie-plugin#0.0.6",
+        "garie-plugin": "https://github.com/eea/garie-plugin#0.0.7",
         "request-promise": "^4.2.2",
         "sleep-promise": "8.0.1",
         "website-scraper": "4.0.0"
