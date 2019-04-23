@@ -32,8 +32,26 @@ function getResults(file) {
     if (!isNaN(score)){
         result['privacyscore'] = score;
     }
-
     return result;
+}
+
+function lookForErrors(file) {
+    const dom = new JSDOM(file);
+    var error_messages = [];
+
+    if (file.includes("<b>SCAN ERROR:</b>")){
+        const errorlist = dom.window.document.querySelectorAll("ul.errorlist");
+        if (errorlist.length > 0){
+            const errors = dom.window.document.querySelectorAll("ul.errorlist li");
+            for (var i = 0; i < errors.length; i++){
+                error_messages.push(errors[i].textContent.split("\n").map(x => x.trim()).join(" "));
+            }
+        }
+        else {
+            error_messages.push("Unknown error");
+        }
+    };
+    return error_messages;
 }
 
 const triggerPrivacyScoreScan = async (url) => {
@@ -176,6 +194,14 @@ const getData = async (item) => {
 
             const result = getResults(html_data);
 
+            const error_messages = lookForErrors(html_data);
+            if (error_messages.length > 0){
+                return reject(`SCAN ERROR for url: ${url}; Message: ${error_messages.join(";")}`);
+            }
+
+            if (result.privacyscore === undefined){
+                return reject(`Failed to scan url: ${url}`);
+            }
             resolve(result);
         } catch (err) {
             console.log(`Failed to get data for ${url}`, err);
