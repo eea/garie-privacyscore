@@ -54,7 +54,7 @@ function lookForErrors(file) {
     return error_messages;
 }
 
-const triggerPrivacyScoreScan = async (url) => {
+const triggerPrivacyScoreScan = async (url, timeout) => {
     return new Promise(async (resolve, reject) => {
         try {
             //first go to https://privacyscore.org to get the xsrftoken and xsrfmiddlewaretoken
@@ -103,6 +103,8 @@ const triggerPrivacyScoreScan = async (url) => {
             const results_uri = privacyscore_base + "site/" + redirect_to[2];
 
 
+            const startTime = Date.now();
+            var scan_success = false;
             while(true){
                 response = await request({
                     method: 'GET',
@@ -110,11 +112,21 @@ const triggerPrivacyScoreScan = async (url) => {
                     resolveWithFullResponse: true
                 });
                 if (!response.body.includes("SCAN IN PROGRESS")){
+                    scan_success = true;
+                    break;
+                }
+                const currentTime = Date.now();
+                if (currentTime - startTime >= timeout){
                     break;
                 }
                 await sleep(500)
             }
-            resolve(results_uri);
+            if (scan_success){
+                resolve(results_uri);
+            }
+            else {
+                reject(`Timout while scanning: ${url}`);
+            }
         } catch (err) {
             console.log(`Failed to trigger the scan for ${url}`, err);
             reject(`Failed to trigger the scan for ${url}`);
@@ -187,7 +199,9 @@ const getData = async (item) => {
             const { reportDir } = item;
             const reportFolder = garie_plugin.utils.helpers.reportDirNow(reportDir);
 
-            const results_url = await triggerPrivacyScoreScan(url);
+            const timeout = config.plugins.privacyscore.timeout || 10;
+
+            const results_url = await triggerPrivacyScoreScan(url, timeout * 60000);
 
             const html_data = await getHtmlData(results_url, reportFolder);
             await getJsonData(results_url, reportFolder);
