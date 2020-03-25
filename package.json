@@ -1,6 +1,6 @@
 {
     "name": "garie-privacyscore",
-    "version": "1.2",
+    "version": "1.2.0",
     "description": "PrivacyScore garie plugin",
     "engines": {
         "node": ">=6"
